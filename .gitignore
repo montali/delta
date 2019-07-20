@@ -3,3 +3,9 @@
 ################################################################################
 
 /.vs
+/obj/x86/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+/obj/x86/Debug/Delta.csprojAssemblyReference.cache
+/obj/x86/Debug/Delta.csproj.CoreCompileInputs.cache
+/bin/Debug
+/DeltaDBManager/.vs
+/obj/x86

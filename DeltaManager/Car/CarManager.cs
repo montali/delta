@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using Delta.DeltaManager.Car;
+using Delta.DeltaManager.Utils;
 
 namespace Delta.DeltaManager.CarNS {
     public class CarManager
@@ -17,12 +17,12 @@ namespace Delta.DeltaManager.CarNS {
             }
             catch (UserNotAuthorizedException e)
             {
-                return null;
+                return false;
             }
-            return DBManager.AddCar(car);
+           return true;// return DBManager.AddCar(car);
         }
 
-        public bool DeleteCar(Car car)
+        public bool DeleteCar(Car car, Hashtable Authorization)
         {
             try
             {
@@ -30,9 +30,9 @@ namespace Delta.DeltaManager.CarNS {
             }
             catch (UserNotAuthorizedException e)
             {
-                return null;
+                return false;
             }
-            return DBManager.DeleteCar(car);
+           return true;// return DBManager.DeleteCar(car);
         }
 
         public ArrayList GetCars (Hashtable Authorization)
@@ -45,10 +45,23 @@ namespace Delta.DeltaManager.CarNS {
             {
                 return null;
             }
-            return DBManager.GetCars();
+           return null;// return DBManager.GetCars();
         }
 
-        public bool UpdateCar (Car updatableCar, Hashtable authorization)
+        public bool UpdateCar (Car UpdatableCar, Hashtable Authorization)
+        {
+            try
+            {
+                DataValidator.CheckAuthorization(Authorization);
+            }
+            catch (UserNotAuthorizedException e)
+            {
+                return false;
+            }
+           return true;// return DBManager.UpdateCar(UpdatableCar);
+        }
+
+        public ArrayList GetAvailableCars(DateTime Start, DateTime End, Hashtable Authorization)
         {
             try
             {
@@ -58,20 +71,7 @@ namespace Delta.DeltaManager.CarNS {
             {
                 return null;
             }
-            return DBManager.updateCar(updatableCar);
-        }
-
-        public ArrayList getAvailableCars(DateTime start, DateTime end)
-        {
-            try
-            {
-                DataValidator.CheckAuthorization(Authorization);
-            }
-            catch (UserNotAuthorizedException e)
-            {
-                return null;
-            }
-            return DBManager.getAvailableCars(start, end);
+           return null;// return DBManager.GetAvailableCars(Start, End);
         }
     }
 }

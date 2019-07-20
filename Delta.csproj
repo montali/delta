@@ -38,6 +38,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -76,10 +77,23 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeltaDBManager\Classes\Booking\Booking.cs" />
+    <Compile Include="DeltaDBManager\Classes\Booking\BookingTable.cs" />
+    <Compile Include="DeltaDBManager\Classes\Car\Car.cs" />
+    <Compile Include="DeltaDBManager\Classes\Car\CarTable.cs" />
+    <Compile Include="DeltaDBManager\Classes\Report\Report.cs" />
+    <Compile Include="DeltaDBManager\Classes\Report\ReportTable.cs" />
+    <Compile Include="DeltaDBManager\Classes\Service\Service.cs" />
+    <Compile Include="DeltaDBManager\Classes\Service\ServiceTable.cs" />
+    <Compile Include="DeltaDBManager\Classes\User\User.cs" />
+    <Compile Include="DeltaDBManager\Classes\User\UserTable.cs" />
+    <Compile Include="DeltaDBManager\DeltaDB.cs" />
+    <Compile Include="DeltaDBManager\Program.cs" />
     <Compile Include="DeltaManager\Booking\Booking.cs" />
     <Compile Include="DeltaManager\Booking\BookingManager.cs" />
     <Compile Include="DeltaManager\Car\Car.cs" />
     <Compile Include="DeltaManager\Car\CarManager.cs" />
+    <Compile Include="DeltaManager\Utils\UserNotAuthorizedException.cs" />
     <Compile Include="DeltaManager\DeltaManager.cs" />
     <Compile Include="DeltaManager\Report\Report.cs" />
     <Compile Include="DeltaManager\Report\ReportManager.cs" />
@@ -88,6 +102,7 @@
     <Compile Include="DeltaManager\User\User.cs" />
     <Compile Include="DeltaManager\User\UserManager.cs" />
     <Compile Include="DeltaManager\Utils\DataValidator.cs" />
+    <Compile Include="DeltaDBManager\DBManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include=".git\objects\info\" />

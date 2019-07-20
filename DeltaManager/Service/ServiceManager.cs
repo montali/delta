@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Delta.DeltaManager.CarNS;
+using Delta.DeltaManager.Utils;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,31 +10,32 @@ namespace Delta.DeltaManager.ServiceNS
 {
     class ServiceManager
     {
-    }
 
-    public bool addCarService (Service ServiceDone, Hashtable Authorization)
-    {
-        try
-        {
-            DataValidator.CheckAuthorization(Authorization);
-        }
-        catch (UserNotAuthorizedException e)
-        {
-            return false;
-        }
-        return DBManager.addCarService(ServiceDone);
-    }
 
-    public ArrayList GetCarServicesForCar (Car ServicedCar)
-    {
-        try
+        public bool addCarService(Service ServiceDone, Hashtable Authorization)
         {
-            DataValidator.CheckAuthorization(Authorization);
+            try
+            {
+                DataValidator.CheckAuthorization(Authorization);
+            }
+            catch (UserNotAuthorizedException e)
+            {
+                return false;
+            }
+           return true;// return DBManager.addCarService(ServiceDone);
         }
-        catch (UserNotAuthorizedException e)
+
+        public ArrayList GetCarServicesForCar(Car ServicedCar, Hashtable Authorization)
         {
-            return null;
+            try
+            {
+                DataValidator.CheckAuthorization(Authorization);
+            }
+            catch (UserNotAuthorizedException e)
+            {
+                return null;
+            }
+           return null;// return DBManager.getCarServicesForCar(ServicedCar);
         }
-        return DBManager.getCarServicesForCar(ServicedCar);
     }
 }

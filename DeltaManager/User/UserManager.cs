@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Delta.DeltaManager.Utils;
 
 namespace Delta.DeltaManager.UserNS
 {
@@ -12,7 +13,7 @@ namespace Delta.DeltaManager.UserNS
 
         public bool LoginChecker(Hashtable Authorization)
         {
-            User LoggedUser;
+            User LoggedUser=null;
             //loggedUser= --> QUERY A DB PER USER
             if (LoggedUser != null)
                 return true;
@@ -22,17 +23,17 @@ namespace Delta.DeltaManager.UserNS
 
         public bool IsAdmin(Hashtable Authorization)
         {
-            User loggedUser = GetUserFromDB(Authorization);
-            if (User.IsAdmin())
-                return true;
-            else
+            User loggedUser = null;//DBManager.GetCurrentUserFromDB(Authorization);
+            //if (User.IsAdmin())
+              //  return true;
+            //else
                 return false;
         }
 
         public bool CreateUser(string Name, string Email, string PassHash)
         {
             User NewUser = new User(Name, Email, PassHash);
-            return DBManager.CreateUser;
+           return true;// return DBManager.CreateUser;
         }
 
         public bool DeleteUser(User DeletableUser, Hashtable Authorization)
@@ -45,20 +46,20 @@ namespace Delta.DeltaManager.UserNS
             {
                 return false;
             }
-            return DBManager.DeleteUser(User.email);
+           return true;// return DBManager.DeleteUser(User.email);
         }
 
         public bool UpdateUser(User UpdatableUser, Hashtable Authorization)
         {
             try
             {
-                DataValidator.checkAuthorization(Authorization);
+                DataValidator.CheckAuthorization(Authorization);
             }
             catch (UserNotAuthorizedException e)
             {
                 return false;
             }
-            return DBManager.UpdateUser(UpdatableUser);
+           return true;// return DBManager.UpdateUser(UpdatableUser);
         }
 
         public ArrayList GetUsers(Hashtable Authorization)
@@ -71,7 +72,7 @@ namespace Delta.DeltaManager.UserNS
             {
                 return null;
             }
-            return DBManager.GetUsers();
+           return null;// return DBManager.GetUsers();
         }
     }
 

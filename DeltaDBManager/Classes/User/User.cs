@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Linq;
 using System.Data.Linq.Mapping;
 
-namespace Delta.DeltaManager.UserNS {
+namespace Delta.DeltaDBManager.UserNS {
     public class User
     {
         // Properties

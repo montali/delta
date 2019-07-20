@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Delta.DeltaManager.CarNS;
+using Delta.DeltaManager.Utils;
+using System;
+using System.Collections;
 
 namespace Delta.DeltaManager.ReportNS
 {
@@ -20,7 +23,7 @@ namespace Delta.DeltaManager.ReportNS
             {
                 return false;
             }
-            DBManager.AddReport(report);
+           return true;// return DBManager.AddReport(report);
         }
 
         public ArrayList retrieveReportsForCar (Car car, Hashtable Authorization)
@@ -33,7 +36,7 @@ namespace Delta.DeltaManager.ReportNS
             {
                 return null;
             }
-            return DBManager.GetReportsForCar(car);
+           return null;// return DBManager.GetReportsForCar(car);
         }
     }
 }

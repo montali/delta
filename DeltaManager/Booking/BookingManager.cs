@@ -1,5 +1,7 @@
 ﻿using System;
-using Booking;
+using System.Collections;
+using Delta.DeltaManager.CarNS;
+using Delta.DeltaManager.Utils;
 
 namespace Delta.DeltaManager.BookingNS
 {
@@ -18,10 +20,10 @@ namespace Delta.DeltaManager.BookingNS
             {
                 return false;
             }
-            return DBManager.BookCar(BookedCar, Start, End);
+           return true;// return DBManager.BookCar(BookedCar, Start, End);
         }
 
-        public bool deleteBooking (Booking DeletableBooking, Hashtable Authorization)
+        public bool DeleteBooking (Booking DeletableBooking, Hashtable Authorization)
         {
             try
             {
@@ -31,14 +33,14 @@ namespace Delta.DeltaManager.BookingNS
             {
                 return false;
             }
-            return DBManager.DeleteBooking(DeletableBooking);
+           return true;// return DBManager.DeleteBooking(DeletableBooking);
         }
 
-        public bool endBooking (Booking EndedBooking, int NewKilometers, int Liters)
+        public bool EndBooking (Booking EndedBooking, int NewKilometers, int Liters)
         {
             EndedBooking.BookedCar.Kilometers = NewKilometers;
             EndedBooking.BookedCar.BurnedLiters = Liters;
-            return DBManager.DeleteBooking(EndedBooking);
+           return true;// return DBManager.DeleteBooking(EndedBooking);
         }
     }
 }

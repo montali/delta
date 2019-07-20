@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Delta.DeltaManager.CarNS
+namespace Delta.DeltaDBManager.CarNS
 {
 
     public class Car

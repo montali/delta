@@ -2,7 +2,7 @@
 using Delta.DeltaManager.CarNS;
 using Delta.DeltaManager.UserNS;
 
-namespace Delta.DeltaManager.BookingNS
+namespace Delta.DeltaDBManager.BookingNS
 {
     public class Booking
     {
