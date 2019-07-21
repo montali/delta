@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using Delta.DeltaDBManager.BookingNS;
 using Delta.DeltaDBManager.CarNS;
-using Delta.DeltaManager.UserNS;
+using Delta.DeltaDBManager.ReportNS;
+using Delta.DeltaDBManager.UserNS;
+
 
 namespace Delta.DeltaDBManager
 {
@@ -40,6 +42,45 @@ namespace Delta.DeltaDBManager
                 return false;
             }
         }
+
+        public bool UpdateBooking (Booking NewBooking)
+        {
+            try
+            {
+                var UpdatingBooking =
+                (from OldBooking in this.Connection.Bookings
+                 where OldBooking.ID == NewBooking.ID
+                 select OldBooking)
+                 .First();
+                UpdatingBooking.BookedCar = NewBooking.BookedCar.PlateNumber;
+                UpdatingBooking.Booker = NewBooking.Booker.Email;
+                UpdatingBooking.Start= NewBooking.Start;
+                UpdatingBooking.End = NewBooking.End;
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+        }
+        public Booking GetBookingByID (int ID)
+        {
+            try
+            {
+                var query =
+                (from booking in this.Connection.Bookings
+                 where booking.ID== ID
+                 select booking)
+                .First();
+                return new Booking(query.ID, this.GetCarByPlate(query.BookedCar), this.GetUserByEmail(query.Booker),query.Start,query.End);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
         public bool AddCar(Car car)
         {
             try
@@ -52,6 +93,22 @@ namespace Delta.DeltaDBManager
                 return false;
             }
         }
+        public Car GetCarByPlate (string Plate)
+        {
+            try
+            {
+                var query =
+                (from car in this.Connection.Cars
+                 where car.PlateNumber == Plate
+                 select car)
+                .First();
+                return new Car(query.PlateNumber, query.Make, query.Model, query.Year, query.Kilometers);
+            } catch (Exception e)
+            {
+                return null;
+            }
+        }
+
         public bool DeleteCar(Car car)
         {
             try
@@ -87,7 +144,6 @@ namespace Delta.DeltaDBManager
                  where car.PlateNumber == updatableCar.PlateNumber
                  select car)
                  .First();
-                updatingCar.PlateNumber = updatableCar.PlateNumber;
                 updatingCar.Make = updatableCar.Make;
                 updatingCar.Model = updatableCar.Model;
                 updatingCar.Year = updatableCar.Year;
@@ -119,5 +175,110 @@ namespace Delta.DeltaDBManager
             }
             return Cars;
         }
+        public bool AddReport (Report report)
+        {
+            try
+            {
+                this.Connection.Reports.InsertOnSubmit(new ReportTable(report));
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+        public bool DeleteReport (Report report)
+        {
+            try
+            {
+                this.Connection.Reports.DeleteOnSubmit(new ReportTable(report));
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+        public Report GetReportByID (int ID)
+        {
+            try
+            {
+                var query =
+                    (from report in this.Connection.Reports
+                     where report.ID == ID
+                     select report)
+                    .First();
+                return new Report(query.ID, this.GetBookingByID(query.ReportedBooking), query.Subject, query.Message);
+            } catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public List<Report> GetReportsForCar(Car car)
+        {
+            List<Report> Reports = new List<Report>();
+            try { 
+            var query =
+                from report in this.Connection.Reports
+                where ((this.GetBookingByID(report.ReportedBooking).BookedCar.PlateNumber) == car.PlateNumber)
+                select report;
+            foreach (var SingleReport in query)
+            {
+                Reports.Add(new Report(SingleReport.ID, this.GetBookingByID(SingleReport.ReportedBooking
+                    ), SingleReport.Subject, SingleReport.Message));
+            }
+            return Reports;
+            } catch (Exception e)
+            {
+                return null;
+            }
+
+        }
+
+        public User GetUserByEmail (string Email)
+        {
+            try
+            {
+                var query =
+                    (from user in this.Connection.Users
+                    where user.Email == Email
+                    select user)
+                    .First();
+                return new User(query.Name, query.Email, query.PasswordHash);
+            } catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public bool AddUser (User user)
+        {
+            try
+            {
+                this.Connection.Users.InsertOnSubmit(new UserTable(user));
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        public bool DeleteUser (User user)
+        {
+            try
+            {
+                this.Connection.Users.DeleteOnSubmit(new UserTable(user));
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+
+
     }
 }

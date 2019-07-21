@@ -1,6 +1,6 @@
 ﻿using System;
-using Delta.DeltaManager.CarNS;
-using Delta.DeltaManager.UserNS;
+using Delta.DeltaDBManager.CarNS;
+using Delta.DeltaDBManager.UserNS;
 
 namespace Delta.DeltaDBManager.BookingNS
 {

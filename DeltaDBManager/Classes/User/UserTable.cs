@@ -21,7 +21,7 @@ namespace Delta.DeltaDBManager.UserNS {
         public short LicensePoints
         { get; set; }
         [Column(IsPrimaryKey = false, Name = "LicenseExp")]
-        DateTime LicenseExpiration
+        public DateTime LicenseExpiration
         { get; set; }
         [Column(IsPrimaryKey = false, Name = "PasswordMD5")]
         public string PasswordHash
@@ -32,6 +32,16 @@ namespace Delta.DeltaDBManager.UserNS {
             this.Name = Name;
             this.Email = Email;
             this.PasswordHash = PasswordHash;
+        }
+
+        public UserTable (User user)
+        {
+            this.Name = user.Name;
+            this.Email = user.Email;
+            this.PasswordHash = user.PasswordHash;
+            this.License = user.License;
+            this.LicensePoints = user.LicensePoints;
+            this.LicenseExpiration = user.LicenseExpiration;
         }
 
 

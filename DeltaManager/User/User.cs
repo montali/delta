@@ -15,7 +15,7 @@ namespace Delta.DeltaManager.UserNS {
         { get; set; }
         public short LicensePoints
         { get; set; }
-        DateTime LicenseExpiration
+        public DateTime LicenseExpiration
         { get; set; }
         public string PasswordHash
         { get; set; }

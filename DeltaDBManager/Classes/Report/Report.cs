@@ -1,5 +1,5 @@
 ﻿using System;
-using Delta.DeltaManager.BookingNS;
+using Delta.DeltaDBManager.BookingNS;
 
 namespace Delta.DeltaDBManager.ReportNS
 {
