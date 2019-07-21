@@ -11,7 +11,7 @@ using Delta.DeltaDBManager.UserNS;
 
 namespace Delta.DeltaDBManager
 {
-    class DBManager
+    class DBManager : DBManagerInterface
     {
         private DeltaDB Connection;
         public DBManager()
