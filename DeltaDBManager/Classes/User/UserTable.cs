@@ -18,7 +18,7 @@ namespace Delta.DeltaDBManager.UserNS {
         public string License
         { get; set; }
         [Column(IsPrimaryKey = false, Name = "LicensePts")]
-        public short LicensePoints
+        public int LicensePoints
         { get; set; }
         [Column(IsPrimaryKey = false, Name = "LicenseExp")]
         public DateTime LicenseExpiration
@@ -26,12 +26,17 @@ namespace Delta.DeltaDBManager.UserNS {
         [Column(IsPrimaryKey = false, Name = "PasswordMD5")]
         public string PasswordHash
         { get; set; }
+        [Column(IsPrimaryKey = false, Name = "isAdmin")]
+        public int isAdmin
+        { get; set; }
 
-        public UserTable(string Name, string Email, string PasswordHash)
+        public UserTable(string Name, string Email, string PasswordHash, int isAdmin)
         {
             this.Name = Name;
             this.Email = Email;
             this.PasswordHash = PasswordHash;
+            this.isAdmin = isAdmin;
+            this.LicenseExpiration = new DateTime(1900, 1, 1);
         }
 
         public UserTable (User user)
@@ -42,8 +47,19 @@ namespace Delta.DeltaDBManager.UserNS {
             this.License = user.License;
             this.LicensePoints = user.LicensePoints;
             this.LicenseExpiration = user.LicenseExpiration;
+            this.isAdmin = Convert.ToInt16(user.isAdmin);
         }
 
+        public UserTable()
+        {
+            this.Name = null;
+            this.Email = null;
+            this.PasswordHash = null;
+            this.License = null;
+            this.LicensePoints = 0;
+            this.LicenseExpiration = new DateTime(1900,1,1);
+            this.isAdmin = 0;
+        }
 
     }
 }

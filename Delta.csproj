@@ -86,10 +86,9 @@
     <None Include=".vs\delta\v15\.suo" />
     <None Include=".vs\slnx.sqlite" />
     <None Include=".vs\VSWorkspaceState.json" />
-    <None Include="app.config" />
-    <None Include="DeltaManager\.vs\DeltaManager\v15\.suo" />
-    <None Include="DeltaManager\.vs\slnx.sqlite" />
-    <None Include="DeltaManager\.vs\VSWorkspaceState.json" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
@@ -104,28 +103,19 @@
     <Compile Include="DeltaDBManager\Classes\Service\ServiceTable.cs" />
     <Compile Include="DeltaDBManager\Classes\User\User.cs" />
     <Compile Include="DeltaDBManager\Classes\User\UserTable.cs" />
+    <Compile Include="DeltaDBManager\DatabaseFault.cs" />
     <Compile Include="DeltaDBManager\DBManagerInterface.cs" />
     <Compile Include="DeltaDBManager\DeltaDB.cs" />
     <Compile Include="DeltaDBManager\Program.cs" />
-    <Compile Include="DeltaManager\Booking\Booking.cs" />
-    <Compile Include="DeltaManager\Booking\BookingManager.cs" />
-    <Compile Include="DeltaManager\Car\Car.cs" />
-    <Compile Include="DeltaManager\Car\CarManager.cs" />
-    <Compile Include="DeltaManager\Utils\UserNotAuthorizedException.cs" />
-    <Compile Include="DeltaManager\DeltaManager.cs" />
-    <Compile Include="DeltaManager\Report\Report.cs" />
-    <Compile Include="DeltaManager\Report\ReportManager.cs" />
-    <Compile Include="DeltaManager\Service\Service.cs" />
-    <Compile Include="DeltaManager\Service\ServiceManager.cs" />
-    <Compile Include="DeltaManager\User\User.cs" />
-    <Compile Include="DeltaManager\User\UserManager.cs" />
-    <Compile Include="DeltaManager\Utils\DataValidator.cs" />
     <Compile Include="DeltaDBManager\DBManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include=".git\objects\info\" />
     <Folder Include=".git\objects\pack\" />
     <Folder Include=".git\refs\tags\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>

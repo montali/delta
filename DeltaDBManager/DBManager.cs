@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Data.Linq;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using Delta.DeltaDBManager.BookingNS;
 using Delta.DeltaDBManager.CarNS;
 using Delta.DeltaDBManager.ReportNS;
+using Delta.DeltaDBManager.ServiceNS;
 using Delta.DeltaDBManager.UserNS;
 
 
@@ -28,6 +30,7 @@ namespace Delta.DeltaDBManager
                 return true;
             }catch(Exception e)
             {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
                 return false;
             }
         }
@@ -245,7 +248,7 @@ namespace Delta.DeltaDBManager
                     where user.Email == Email
                     select user)
                     .First();
-                return new User(query.Name, query.Email, query.PasswordHash);
+                return new User(query.Name, query.Email, query.PasswordHash,true);
             } catch (Exception e)
             {
                 return null;
@@ -256,13 +259,17 @@ namespace Delta.DeltaDBManager
         {
             try
             {
+                Console.WriteLine(user.LicenseExpiration);
                 this.Connection.Users.InsertOnSubmit(new UserTable(user));
+                this.Connection.SubmitChanges();
                 return true;
-            }
-            catch (Exception e)
+            }catch(Exception e)
             {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
                 return false;
             }
+
+
         }
 
         public bool DeleteUser (User user)
@@ -277,8 +284,83 @@ namespace Delta.DeltaDBManager
                 return false;
             }
         }
+        public List<User> GetUsers()
+        {
+
+            List<User> Users = new List<User>();
+            var query =
+                from userz in this.Connection.Users
+                select userz;
+            
+            foreach (var utonto in query)
+            {
+                Users.Add(new User(utonto.Name, utonto.Email, utonto.PasswordHash,Convert.ToBoolean(utonto.isAdmin)));
+            }
+            return Users;
 
 
+        }
+        public bool AddService(Service service)
+        {
+            try
+            {
+                this.Connection.Services.InsertOnSubmit(new ServiceTable(service));
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+        public bool DeleteService(Service service)
+        {
+            try
+            {
+                this.Connection.Services.DeleteOnSubmit(new ServiceTable(service));
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
 
+        }
+        public bool UpdateService(Service UpdatableService)
+        {
+            try { 
+            var updatingService =
+                (from serv in this.Connection.Services
+                 where serv.ID== UpdatableService.ID
+                 select serv)
+                 .First();
+            updatingService.Kilometers = UpdatableService.Kilometers;
+            updatingService.ServicedCar = UpdatableService.ServicedCar.PlateNumber;
+            updatingService.TotalSpent = UpdatableService.TotalSpent;
+            return true;
+        }
+            catch (Exception e)
+            {
+                return false;
+            }
+    }
+        public List<Service> GetServicesForCar (Car car)
+        {
+            try
+            {
+                List < Service > RetrievedServices= new List<Service>();
+                var query =
+                    from serv in this.Connection.Services
+                    where serv.ServicedCar == car.PlateNumber
+                    select serv;
+                foreach (var service in query)
+                {
+                    RetrievedServices.Add(new Service(this.GetCarByPlate(service.ServicedCar), service.Kilometers, service.TotalSpent));
+                }
+                return RetrievedServices;
+            } catch (Exception e)
+            {
+                return null;
+            }
+        }
     }
 }

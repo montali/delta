@@ -27,14 +27,26 @@ namespace Delta.DeltaDBManager.UserNS {
         [DataMember]
         public string PasswordHash
         { get; set; }
-
-        public User(string Name, string Email, string PasswordHash)
+        [DataMember]
+        public bool isAdmin
+        { get; set; }
+        
+        public User(string Name, string Email, string PasswordHash, bool isAdmin)
         {
             this.Name = Name;
             this.Email = Email;
             this.PasswordHash = PasswordHash;
+            this.isAdmin = isAdmin;
+            this.LicenseExpiration = new DateTime(1900, 1, 1);
         }
-
+        public User()
+        {
+            this.Name = "";
+            this.Email = "";
+            this.PasswordHash = "";
+            this.isAdmin = false;
+            this.LicenseExpiration = new DateTime(1900, 1, 1);
+        }
 
     }
 }

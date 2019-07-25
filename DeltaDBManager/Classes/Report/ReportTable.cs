@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data.Linq.Mapping;
-using Delta.DeltaManager.BookingNS;
+using Delta.DeltaDBManager.BookingNS;
 
 namespace Delta.DeltaDBManager.ReportNS
 {
