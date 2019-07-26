@@ -37,6 +37,8 @@ namespace Delta.DeltaDBManager
         [OperationContract]
         [FaultContract(typeof(DatabaseFault))]
         bool AddCar(Car car);
+        [OperationContract]
+        [FaultContract(typeof(DatabaseFault))]
         Car GetCarByPlate(string Plate);
         [OperationContract]
         [FaultContract(typeof(DatabaseFault))]
@@ -70,6 +72,11 @@ namespace Delta.DeltaDBManager
         [OperationContract]
         [FaultContract(typeof(DatabaseFault))]
         bool DeleteUser(User user);
+
+        [OperationContract]
+        [FaultContract(typeof(DatabaseFault))]
+        bool UpdateUser(User updatableUser);
+
         [OperationContract]
         [FaultContract(typeof(DatabaseFault))]
         List<User> GetUsers();

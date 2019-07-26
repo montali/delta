@@ -32,5 +32,14 @@ namespace Delta.DeltaDBManager.CarNS
             this.Year = Year;
             this.Kilometers = Kilometers;
         }
+        public Car (Car car)
+        {
+            this.PlateNumber = car.PlateNumber;
+            this.Make = car.Make;
+            this.Model = car.Model;
+            this.Year = car.Year;
+            this.Kilometers = car.Kilometers;
+            this.BurnedLiters = car.BurnedLiters;
+        }
     }
 }

@@ -39,6 +39,16 @@ namespace Delta.DeltaDBManager.UserNS {
             this.isAdmin = isAdmin;
             this.LicenseExpiration = new DateTime(1900, 1, 1);
         }
+        public User (string Name, string Email, string PasswordHash, bool isAdmin, short LicensePoints, DateTime LicenseExpiration, string License)
+        {
+            this.Name = Name;
+            this.Email = Email;
+            this.PasswordHash = PasswordHash;
+            this.isAdmin = isAdmin;
+            this.LicensePoints = LicensePoints;
+            this.License = License;
+            this.LicenseExpiration = LicenseExpiration;
+        }
         public User()
         {
             this.Name = "";

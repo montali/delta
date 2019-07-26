@@ -275,7 +275,7 @@ namespace Delta.DeltaDBManager
                     where user.Email == Email
                     select user)
                     .First();
-                return new User(query.Name, query.Email, query.PasswordHash,true);
+                return new User(query.Name, query.Email, query.PasswordHash,Convert.ToBoolean(query.isAdmin),Convert.ToInt16(query.LicensePoints), query.LicenseExpiration, query.License);
             } catch (Exception e)
             {
                 return null;
@@ -304,6 +304,32 @@ namespace Delta.DeltaDBManager
             try
             {
                 this.Connection.Users.DeleteOnSubmit(new UserTable(user));
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+        public bool UpdateUser (User updatableUser)
+        {
+            try
+            {
+                var updatingUser =
+                    (from userQuery in this.Connection.Users
+                     where userQuery.Email == updatableUser.Email
+                     select userQuery)
+                     .First();
+                updatingUser.Name= updatableUser.Name;
+                updatingUser.License = updatableUser.License;
+                updatingUser.LicenseExpiration = updatableUser.LicenseExpiration;
+                updatingUser.LicensePoints = updatableUser.LicensePoints;
+                updatingUser.PasswordHash = updatableUser.PasswordHash;
+                updatingUser.isAdmin = Convert.ToInt32(updatableUser.isAdmin);
+
+
+
+
                 return true;
             }
             catch (Exception e)
