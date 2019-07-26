@@ -83,7 +83,34 @@ namespace Delta.DeltaDBManager
                 return null;
             }
         }
+        public List<Booking> GetBookings()
+        {
+            List<Booking> Bookings = new List<Booking>();
+            var query =
+                from bookings in this.Connection.Bookings
+                select bookings;
 
+            foreach (var booked in query)
+            {
+                Bookings.Add(new Booking(booked.ID, this.GetCarByPlate(booked.BookedCar), this.GetUserByEmail(booked.Booker), booked.Start, booked.End));
+            }
+            return Bookings;
+        }
+
+        public List<Booking> GetBookingsForCar(Car car)
+        {
+            List<Booking> Bookings = new List<Booking>();
+            var query =
+                from bookings in this.Connection.Bookings
+                where bookings.BookedCar == car.PlateNumber
+                select bookings;
+
+            foreach (var booked in query)
+            {
+                Bookings.Add(new Booking(booked.ID, car, this.GetUserByEmail(booked.Booker), booked.Start, booked.End));
+            }
+            return Bookings;
+        }
         public bool AddCar(Car car)
         {
             try
@@ -360,6 +387,52 @@ namespace Delta.DeltaDBManager
             } catch (Exception e)
             {
                 return null;
+            }
+        }
+
+        public int GetMaxBooking()
+        {
+            try
+            {
+                var query =
+                    (from book in this.Connection.Bookings
+                    select book.ID)
+                    .Max();
+                return query;
+            }
+            catch (Exception e)
+            {
+                return 0;
+            }
+        }
+        public int GetMaxService()
+        {
+            try
+            {
+                var query =
+                    (from serv in this.Connection.Services
+                     select serv.ID)
+                    .Max();
+                return query;
+            }
+            catch (Exception e)
+            {
+                return 0;
+            }
+        }
+        public int GetMaxReport()
+        {
+            try
+            {
+                var query =
+                    (from repo in this.Connection.Reports
+                     select repo.ID)
+                    .Max();
+                return query;
+            }
+            catch (Exception e)
+            {
+                return 0;
             }
         }
     }
