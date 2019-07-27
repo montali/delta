@@ -232,24 +232,20 @@ namespace Delta.DeltaDBManager
         }
         public bool AddReport (Report report)
         {
-            try
-            {
+            
                 this.Connection.Reports.InsertOnSubmit(new ReportTable(report));
                 this.Connection.SubmitChanges();
                 return true;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
+            
+
         }
-        public bool DeleteReport (Report DeletingReport)
+        public bool DeleteReport (int ID)
         {
             try
             {
                 var query =
                     (from report in this.Connection.Reports
-                     where report.ID == DeletingReport.ID
+                     where report.ID == ID
                      select report)
                     .First();
                 this.Connection.Reports.DeleteOnSubmit(query);
@@ -277,13 +273,12 @@ namespace Delta.DeltaDBManager
             }
         }
 
-        public List<Report> GetReportsForCar(Car car)
+        public List<Report> GetReportsForCar(string CarPlate)
         {
             List<Report> Reports = new List<Report>();
-            try { 
             var query =
                 from report in this.Connection.Reports
-                where ((this.GetBookingByID(report.ReportedBooking).BookedCar.PlateNumber) == car.PlateNumber)
+                where ((this.GetBookingByID(report.ReportedBooking).BookedCar.PlateNumber) == CarPlate)
                 select report;
             foreach (var SingleReport in query)
             {
@@ -291,13 +286,38 @@ namespace Delta.DeltaDBManager
                     ), SingleReport.Subject, SingleReport.Message));
             }
             return Reports;
-            } catch (Exception e)
-            {
-                return null;
-            }
+            
 
         }
+        public bool UpdateReport (Report UpdatableReport)
+        {
+            var updatingReport =
+                (from reportQuery in this.Connection.Reports
+                 where reportQuery.ID == UpdatableReport.ID
+                 select reportQuery)
+                 .First();
+            updatingReport.Subject = UpdatableReport.Subject;
+            updatingReport.Message = UpdatableReport.Message;
+            updatingReport.ReportedBooking = UpdatableReport.ReportedBooking.ID;
+            this.Connection.SubmitChanges();
+            return true;
+        }
+        public List<Report> GetReportsForBooking(int BookingID)
+        {
+            List<Report> Reports = new List<Report>();
+                var query =
+                    from report in this.Connection.Reports
+                    where (report.ReportedBooking == BookingID)
+                    select report;
+                foreach (var SingleReport in query)
+                {
+                    Reports.Add(new Report(SingleReport.ID, this.GetBookingByID(SingleReport.ReportedBooking
+                        ), SingleReport.Subject, SingleReport.Message));
+                }
+                return Reports;
+           
 
+        }
         public User GetUserByEmail (string Email)
         {
             try
@@ -397,7 +417,6 @@ namespace Delta.DeltaDBManager
         }
         public bool UpdateService(Service UpdatableService)
         {
-            try { 
             var updatingService =
                 (from serv in this.Connection.Services
                  where serv.ID== UpdatableService.ID
@@ -408,11 +427,7 @@ namespace Delta.DeltaDBManager
             updatingService.TotalSpent = UpdatableService.TotalSpent;
             this.Connection.SubmitChanges();
             return true;
-        }
-            catch (Exception e)
-            {
-                return false;
-            }
+        
     }
         public List<Service> GetServicesForCar (string PlateNumber)
         {

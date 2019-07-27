@@ -26,5 +26,12 @@ namespace Delta.DeltaDBManager.ReportNS
             this.Subject = Subject;
             this.Message = Message;
         }
+        public Report()
+        {
+            this.ID = -1;
+            this.ReportedBooking = null;
+            this.Subject = "";
+            this.Message = "";
+        }
     }
 }

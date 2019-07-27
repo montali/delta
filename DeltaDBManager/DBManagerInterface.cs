@@ -60,12 +60,18 @@ namespace Delta.DeltaDBManager
         bool AddReport(Report report);
         [OperationContract]
         [FaultContract(typeof(DatabaseFault))]
-        bool DeleteReport(Report report);
+        bool DeleteReport(int ID);
         [OperationContract]
         Report GetReportByID(int ID);
         [OperationContract]
         [FaultContract(typeof(DatabaseFault))]
-        List<Report> GetReportsForCar(Car car);
+        bool UpdateReport(Report UpdatableReport);
+        [OperationContract]
+        [FaultContract(typeof(DatabaseFault))]
+        List<Report> GetReportsForBooking(int BookingID);
+        [OperationContract]
+        [FaultContract(typeof(DatabaseFault))]
+        List<Report> GetReportsForCar(string CarPlate);
         [OperationContract]
         [FaultContract(typeof(DatabaseFault))]
         User GetUserByEmail(string Email);

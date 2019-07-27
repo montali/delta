@@ -13,10 +13,10 @@ namespace Delta.DeltaDBManager.ReportNS
         [Column(IsPrimaryKey = false, Name = "Booking")]
         public int ReportedBooking
         { get; set; }
-        [Column(IsPrimaryKey = true, Name = "Type")]
+        [Column(IsPrimaryKey = false, Name = "Type")]
         public string Subject
         { get; set; }
-        [Column(IsPrimaryKey = true, Name = "Message")]
+        [Column(IsPrimaryKey = false, Name = "Message")]
         public string Message
         { get; set; }
         public ReportTable(int ID, int ReportedBooking, string Subject, string Message)
@@ -32,6 +32,13 @@ namespace Delta.DeltaDBManager.ReportNS
             this.ReportedBooking = report.ReportedBooking.ID;
             this.Subject = report.Subject;
             this.Message = report.Message;
+        }
+        public ReportTable()
+        {
+            this.ID = -1;
+            this.ReportedBooking = -1;
+            this.Subject = "";
+            this.Message = "";
         }
     }
 }
