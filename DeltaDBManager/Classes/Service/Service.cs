@@ -22,11 +22,19 @@ namespace Delta.DeltaDBManager.ServiceNS
         [DataMember]
         public float TotalSpent
         { get; set; }
-        public Service (Car ServicedCar, int Kilometers, float TotalSpent)
+        public Service (int ID, Car ServicedCar, int Kilometers, float TotalSpent)
         {
+            this.ID = ID;
             this.ServicedCar = ServicedCar;
             this.Kilometers = Kilometers;
             this.TotalSpent = TotalSpent;
+        }
+        public Service()
+        {
+            this.ID = -1;
+            this.ServicedCar = null;
+            this.Kilometers = 0;
+            this.TotalSpent = 0;
         }
     }
 }

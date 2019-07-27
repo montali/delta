@@ -36,6 +36,9 @@ namespace Delta.DeltaDBManager
         List<Booking> GetBookingsForCar(Car car);
         [OperationContract]
         [FaultContract(typeof(DatabaseFault))]
+        List<Booking> GetBookingsForUser(string UserEmail);
+        [OperationContract]
+        [FaultContract(typeof(DatabaseFault))]
         bool AddCar(Car car);
         [OperationContract]
         [FaultContract(typeof(DatabaseFault))]
@@ -82,16 +85,19 @@ namespace Delta.DeltaDBManager
         List<User> GetUsers();
         [OperationContract]
         [FaultContract(typeof(DatabaseFault))]
+        Service GetServiceByID(int ID);
+        [OperationContract]
+        [FaultContract(typeof(DatabaseFault))]
         bool AddService(Service service);
         [OperationContract]
         [FaultContract(typeof(DatabaseFault))]
-        bool DeleteService(Service service);
+        bool DeleteService(int ID);
         [OperationContract]
         [FaultContract(typeof(DatabaseFault))]
         bool UpdateService(Service service);
         [OperationContract]
         [FaultContract(typeof(DatabaseFault))]
-        List<Service> GetServicesForCar(Car car);
+        List<Service> GetServicesForCar(string PlateNumber);
         [OperationContract]
         [FaultContract(typeof(DatabaseFault))]
         int GetMaxBooking();

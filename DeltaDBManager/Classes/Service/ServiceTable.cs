@@ -20,19 +20,28 @@ namespace Delta.DeltaDBManager.ServiceNS
         public int Kilometers
         { get; set; }
         [Column(IsPrimaryKey = false, Name = "TotalSpent")]
-        public float TotalSpent
+        public double TotalSpent
         { get; set; }
-        public ServiceTable (string ServicedCar, int Kilometers, float TotalSpent)
+        public ServiceTable (int ID, string ServicedCar, int Kilometers, double TotalSpent)
         {
+            this.ID = ID;
             this.ServicedCar = ServicedCar;
             this.Kilometers = Kilometers;
             this.TotalSpent = TotalSpent;
         }
         public ServiceTable (Service service)
         {
+            this.ID = service.ID;
             this.ServicedCar = service.ServicedCar.PlateNumber;
             this.Kilometers = service.Kilometers;
-            this.TotalSpent = service.TotalSpent;
+            this.TotalSpent = (double)service.TotalSpent;
+        }
+        public ServiceTable()
+        {
+            this.ID = -1;
+            this.ServicedCar = null;
+            this.Kilometers = 0;
+            this.TotalSpent = 0;
         }
     }
 }

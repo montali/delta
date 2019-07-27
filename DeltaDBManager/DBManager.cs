@@ -27,18 +27,24 @@ namespace Delta.DeltaDBManager
             try
             {
                 this.Connection.Bookings.InsertOnSubmit(new BookingTable(booking));
+                this.Connection.SubmitChanges();
                 return true;
             }catch(Exception e)
             {
                 throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
-                return false;
             }
         }
-        public bool DeleteBooking (Booking booking)
+        public bool DeleteBooking (Booking DeletingBooking)
         {
             try
             {
-                this.Connection.Bookings.DeleteOnSubmit(new BookingTable(booking));
+                var query =
+                    (from booking in this.Connection.Bookings
+                     where booking.ID == DeletingBooking.ID
+                     select booking)
+                    .First();
+                this.Connection.Bookings.DeleteOnSubmit(query);
+                this.Connection.SubmitChanges();
                 return true;
             }catch (Exception e)
             {
@@ -59,6 +65,7 @@ namespace Delta.DeltaDBManager
                 UpdatingBooking.Booker = NewBooking.Booker.Email;
                 UpdatingBooking.Start= NewBooking.Start;
                 UpdatingBooking.End = NewBooking.End;
+                this.Connection.SubmitChanges();
                 return true;
             }
             catch (Exception e)
@@ -111,11 +118,28 @@ namespace Delta.DeltaDBManager
             }
             return Bookings;
         }
+
+        public List<Booking> GetBookingsForUser(string UserEmail)
+        {
+            List<Booking> Bookings = new List<Booking>();
+            var query =
+                from bookings in this.Connection.Bookings
+                where bookings.Booker == UserEmail
+                select bookings;
+
+            foreach (var booked in query)
+            {
+                Bookings.Add(new Booking(booked.ID, this.GetCarByPlate(booked.BookedCar), this.GetUserByEmail(booked.Booker), booked.Start, booked.End));
+            }
+            return Bookings;
+        }
+
         public bool AddCar(Car car)
         {
             try
             {
                 this.Connection.Cars.InsertOnSubmit(new CarTable(car));
+                this.Connection.SubmitChanges();
                 return true;
             }
             catch (Exception e)
@@ -132,18 +156,24 @@ namespace Delta.DeltaDBManager
                  where car.PlateNumber == Plate
                  select car)
                 .First();
-                return new Car(query.PlateNumber, query.Make, query.Model, query.Year, query.Kilometers);
+                return new Car(query.PlateNumber, query.Make, query.Model, query.Year, query.Kilometers, query.BurnedLiters);
             } catch (Exception e)
             {
                 return null;
             }
         }
 
-        public bool DeleteCar(Car car)
+        public bool DeleteCar(Car DeletingCar)
         {
             try
             {
-                this.Connection.Cars.DeleteOnSubmit(new CarTable(car));
+                var query =
+                    (from car in this.Connection.Cars
+                     where car.PlateNumber == DeletingCar.PlateNumber
+                     select car)
+                    .First();
+                this.Connection.Cars.DeleteOnSubmit(query);
+                this.Connection.SubmitChanges();
                 return true;
             }
             catch (Exception e)
@@ -160,15 +190,13 @@ namespace Delta.DeltaDBManager
                 select car;
             foreach (var Automobile in query)
             {
-                Cars.Add(new Car(Automobile.PlateNumber,Automobile.Make,Automobile.Model,Automobile.Year,Automobile.Kilometers));
+                Cars.Add(new Car(Automobile.PlateNumber,Automobile.Make,Automobile.Model,Automobile.Year,Automobile.Kilometers, Automobile.BurnedLiters));
             }
             return Cars;
         }
 
         public bool UpdateCar(Car updatableCar)
         {
-            try
-            {
                 var updatingCar =
                 (from car in this.Connection.Cars
                  where car.PlateNumber == updatableCar.PlateNumber
@@ -179,12 +207,9 @@ namespace Delta.DeltaDBManager
                 updatingCar.Year = updatableCar.Year;
                 updatingCar.Kilometers = updatableCar.Kilometers;
                 updatingCar.BurnedLiters = updatableCar.BurnedLiters;
+                this.Connection.SubmitChanges();
                 return true;
-            }
-            catch ( Exception e)
-            {
-                return false;
-            }
+            
         }
 
         public List<Car> GetAvailableCars (DateTime Start, DateTime End)
@@ -201,7 +226,7 @@ namespace Delta.DeltaDBManager
                 select cars;
             foreach (var Automobile in query)
             {
-                Cars.Add(new Car(Automobile.PlateNumber, Automobile.Make, Automobile.Model, Automobile.Year, Automobile.Kilometers));
+                Cars.Add(new Car(Automobile.PlateNumber, Automobile.Make, Automobile.Model, Automobile.Year, Automobile.Kilometers, Automobile.BurnedLiters));
             }
             return Cars;
         }
@@ -210,6 +235,7 @@ namespace Delta.DeltaDBManager
             try
             {
                 this.Connection.Reports.InsertOnSubmit(new ReportTable(report));
+                this.Connection.SubmitChanges();
                 return true;
             }
             catch (Exception e)
@@ -217,11 +243,17 @@ namespace Delta.DeltaDBManager
                 return false;
             }
         }
-        public bool DeleteReport (Report report)
+        public bool DeleteReport (Report DeletingReport)
         {
             try
             {
-                this.Connection.Reports.DeleteOnSubmit(new ReportTable(report));
+                var query =
+                    (from report in this.Connection.Reports
+                     where report.ID == DeletingReport.ID
+                     select report)
+                    .First();
+                this.Connection.Reports.DeleteOnSubmit(query);
+                this.Connection.SubmitChanges();
                 return true;
             }
             catch (Exception e)
@@ -284,37 +316,24 @@ namespace Delta.DeltaDBManager
 
         public bool AddUser (User user)
         {
-            try
-            {
-                Console.WriteLine(user.LicenseExpiration);
                 this.Connection.Users.InsertOnSubmit(new UserTable(user));
                 this.Connection.SubmitChanges();
                 return true;
-            }catch(Exception e)
-            {
-                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
-                return false;
-            }
-
-
         }
 
-        public bool DeleteUser (User user)
+        public bool DeleteUser (User DeletingUser)
         {
-            try
-            {
-                this.Connection.Users.DeleteOnSubmit(new UserTable(user));
+            var query =
+                (from user in this.Connection.Users
+                 where user.Email == DeletingUser.Email
+                 select user)
+                .First();
+            this.Connection.Users.DeleteOnSubmit(query);
+            this.Connection.SubmitChanges();
                 return true;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
         }
         public bool UpdateUser (User updatableUser)
         {
-            try
-            {
                 var updatingUser =
                     (from userQuery in this.Connection.Users
                      where userQuery.Email == updatableUser.Email
@@ -326,16 +345,11 @@ namespace Delta.DeltaDBManager
                 updatingUser.LicensePoints = updatableUser.LicensePoints;
                 updatingUser.PasswordHash = updatableUser.PasswordHash;
                 updatingUser.isAdmin = Convert.ToInt32(updatableUser.isAdmin);
-
-
-
-
+                Console.WriteLine("{0} - {1}", updatingUser.isAdmin, updatingUser.License);
+                this.Connection.SubmitChanges();
                 return true;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
+            
+
         }
         public List<User> GetUsers()
         {
@@ -347,7 +361,7 @@ namespace Delta.DeltaDBManager
             
             foreach (var utonto in query)
             {
-                Users.Add(new User(utonto.Name, utonto.Email, utonto.PasswordHash,Convert.ToBoolean(utonto.isAdmin)));
+                Users.Add(new User(utonto.Name, utonto.Email, utonto.PasswordHash,Convert.ToBoolean(utonto.isAdmin),Convert.ToInt16(utonto.LicensePoints), utonto.LicenseExpiration, utonto.License));
             }
             return Users;
 
@@ -355,21 +369,24 @@ namespace Delta.DeltaDBManager
         }
         public bool AddService(Service service)
         {
-            try
-            {
+
                 this.Connection.Services.InsertOnSubmit(new ServiceTable(service));
+                this.Connection.SubmitChanges();
                 return true;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
+            
+
         }
-        public bool DeleteService(Service service)
+        public bool DeleteService(int ID)
         {
             try
             {
-                this.Connection.Services.DeleteOnSubmit(new ServiceTable(service));
+                var service =
+                   (from serv in this.Connection.Services
+                    where serv.ID == ID
+                    select serv)
+                    .First();
+                this.Connection.Services.DeleteOnSubmit(service);
+                this.Connection.SubmitChanges();
                 return true;
             }
             catch (Exception e)
@@ -389,6 +406,7 @@ namespace Delta.DeltaDBManager
             updatingService.Kilometers = UpdatableService.Kilometers;
             updatingService.ServicedCar = UpdatableService.ServicedCar.PlateNumber;
             updatingService.TotalSpent = UpdatableService.TotalSpent;
+            this.Connection.SubmitChanges();
             return true;
         }
             catch (Exception e)
@@ -396,26 +414,29 @@ namespace Delta.DeltaDBManager
                 return false;
             }
     }
-        public List<Service> GetServicesForCar (Car car)
+        public List<Service> GetServicesForCar (string PlateNumber)
         {
-            try
-            {
                 List < Service > RetrievedServices= new List<Service>();
                 var query =
                     from serv in this.Connection.Services
-                    where serv.ServicedCar == car.PlateNumber
+                    where serv.ServicedCar == PlateNumber
                     select serv;
                 foreach (var service in query)
                 {
-                    RetrievedServices.Add(new Service(this.GetCarByPlate(service.ServicedCar), service.Kilometers, service.TotalSpent));
+                    RetrievedServices.Add(new Service(service.ID, this.GetCarByPlate(service.ServicedCar), service.Kilometers, (float)service.TotalSpent));
                 }
                 return RetrievedServices;
-            } catch (Exception e)
-            {
-                return null;
-            }
+            
         }
-
+        public Service GetServiceByID (int ID)
+        {
+            var service =
+               (from serv in this.Connection.Services
+                where serv.ID == ID
+                select serv)
+                .First();
+            return new Service(service.ID, this.GetCarByPlate(service.ServicedCar), service.Kilometers, (float)service.TotalSpent);
+        }
         public int GetMaxBooking()
         {
             try

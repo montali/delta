@@ -24,13 +24,14 @@ namespace Delta.DeltaDBManager.CarNS
         [DataMember]
         public int BurnedLiters
         { get; set; }
-        public Car(string PlateNumber, string Make, string Model, int Year, int Kilometers)
+        public Car(string PlateNumber, string Make, string Model, int Year, int Kilometers, int BurnedLiters)
         {
             this.PlateNumber = PlateNumber;
             this.Make = Make;
             this.Model = Model;
             this.Year = Year;
             this.Kilometers = Kilometers;
+            this.BurnedLiters = BurnedLiters;
         }
         public Car (Car car)
         {
