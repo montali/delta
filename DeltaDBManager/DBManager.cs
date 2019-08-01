@@ -217,7 +217,7 @@ namespace Delta.DeltaDBManager
             List<Car> Cars = new List<Car>();
             var bookings =
                 from booking in this.Connection.Bookings
-                where (Start < booking.Start && End < booking.End) || (Start > booking.Start && Start < booking.End)
+                where (Start > booking.Start && End > booking.End) || (Start > booking.Start && Start < booking.End)
                 select booking.BookedCar;
 
             var query =
