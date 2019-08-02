@@ -365,7 +365,6 @@ namespace Delta.DeltaDBManager
                 updatingUser.LicensePoints = updatableUser.LicensePoints;
                 updatingUser.PasswordHash = updatableUser.PasswordHash;
                 updatingUser.isAdmin = Convert.ToInt32(updatableUser.isAdmin);
-                Console.WriteLine("{0} - {1}", updatingUser.isAdmin, updatingUser.License);
                 this.Connection.SubmitChanges();
                 return true;
             
