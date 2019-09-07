@@ -48,7 +48,7 @@ namespace Delta.DeltaDBManager
                 return true;
             }catch (Exception e)
             {
-                return false;
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
         }
 
@@ -70,7 +70,7 @@ namespace Delta.DeltaDBManager
             }
             catch (Exception e)
             {
-                return false;
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
 
         }
@@ -87,19 +87,25 @@ namespace Delta.DeltaDBManager
             }
             catch (Exception e)
             {
-                return null;
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
         }
         public List<Booking> GetBookings()
         {
             List<Booking> Bookings = new List<Booking>();
-            var query =
-                from bookings in this.Connection.Bookings
-                select bookings;
-
-            foreach (var booked in query)
+            try
             {
-                Bookings.Add(new Booking(booked.ID, this.GetCarByPlate(booked.BookedCar), this.GetUserByEmail(booked.Booker), booked.Start, booked.End));
+                var query =
+                    from bookings in this.Connection.Bookings
+                    select bookings;
+
+                foreach (var booked in query)
+                {
+                    Bookings.Add(new Booking(booked.ID, this.GetCarByPlate(booked.BookedCar), this.GetUserByEmail(booked.Booker), booked.Start, booked.End));
+                }
+            }catch(Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
             return Bookings;
         }
@@ -107,14 +113,20 @@ namespace Delta.DeltaDBManager
         public List<Booking> GetBookingsForCar(Car car)
         {
             List<Booking> Bookings = new List<Booking>();
-            var query =
-                from bookings in this.Connection.Bookings
-                where bookings.BookedCar == car.PlateNumber
-                select bookings;
-
-            foreach (var booked in query)
+            try
             {
-                Bookings.Add(new Booking(booked.ID, car, this.GetUserByEmail(booked.Booker), booked.Start, booked.End));
+                var query =
+                    from bookings in this.Connection.Bookings
+                    where bookings.BookedCar == car.PlateNumber
+                    select bookings;
+
+                foreach (var booked in query)
+                {
+                    Bookings.Add(new Booking(booked.ID, car, this.GetUserByEmail(booked.Booker), booked.Start, booked.End));
+                }
+            } catch (Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
             return Bookings;
         }
@@ -122,14 +134,20 @@ namespace Delta.DeltaDBManager
         public List<Booking> GetBookingsForUser(string UserEmail)
         {
             List<Booking> Bookings = new List<Booking>();
-            var query =
-                from bookings in this.Connection.Bookings
-                where bookings.Booker == UserEmail
-                select bookings;
-
-            foreach (var booked in query)
+            try
             {
-                Bookings.Add(new Booking(booked.ID, this.GetCarByPlate(booked.BookedCar), this.GetUserByEmail(booked.Booker), booked.Start, booked.End));
+                var query =
+                    from bookings in this.Connection.Bookings
+                    where bookings.Booker == UserEmail
+                    select bookings;
+
+                foreach (var booked in query)
+                {
+                    Bookings.Add(new Booking(booked.ID, this.GetCarByPlate(booked.BookedCar), this.GetUserByEmail(booked.Booker), booked.Start, booked.End));
+                }
+            }catch (Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
             return Bookings;
         }
@@ -144,7 +162,7 @@ namespace Delta.DeltaDBManager
             }
             catch (Exception e)
             {
-                return false;
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
         }
         public Car GetCarByPlate (string Plate)
@@ -159,7 +177,7 @@ namespace Delta.DeltaDBManager
                 return new Car(query.PlateNumber, query.Make, query.Model, query.Year, query.Kilometers, query.BurnedLiters);
             } catch (Exception e)
             {
-                return null;
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
         }
 
@@ -178,25 +196,33 @@ namespace Delta.DeltaDBManager
             }
             catch (Exception e)
             {
-                return false;
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
         }
 
         public List<Car> GetCars()
         {
             List<Car> Cars = new List<Car>();
-            var query =
-                from car in this.Connection.Cars
-                select car;
-            foreach (var Automobile in query)
+            try
             {
-                Cars.Add(new Car(Automobile.PlateNumber,Automobile.Make,Automobile.Model,Automobile.Year,Automobile.Kilometers, Automobile.BurnedLiters));
+                var query =
+                    from car in this.Connection.Cars
+                    select car;
+                foreach (var Automobile in query)
+                {
+                    Cars.Add(new Car(Automobile.PlateNumber, Automobile.Make, Automobile.Model, Automobile.Year, Automobile.Kilometers, Automobile.BurnedLiters));
+                }
+            }catch(Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
             return Cars;
         }
 
         public bool UpdateCar(Car updatableCar)
         {
+            try
+            {
                 var updatingCar =
                 (from car in this.Connection.Cars
                  where car.PlateNumber == updatableCar.PlateNumber
@@ -208,36 +234,49 @@ namespace Delta.DeltaDBManager
                 updatingCar.Kilometers = updatableCar.Kilometers;
                 updatingCar.BurnedLiters = updatableCar.BurnedLiters;
                 this.Connection.SubmitChanges();
-                return true;
+            } catch(Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
+            }
+            return true;
             
         }
 
         public List<Car> GetAvailableCars (DateTime Start, DateTime End)
         {
             List<Car> Cars = new List<Car>();
-            var bookings =
-                from booking in this.Connection.Bookings
-                where (Start > booking.Start && End > booking.End) || (Start > booking.Start && Start < booking.End)
-                select booking.BookedCar;
-
-            var query =
-                from cars in this.Connection.Cars
-                .Where(i => !bookings.Contains(i.PlateNumber))
-                select cars;
-            foreach (var Automobile in query)
+            try
             {
-                Cars.Add(new Car(Automobile.PlateNumber, Automobile.Make, Automobile.Model, Automobile.Year, Automobile.Kilometers, Automobile.BurnedLiters));
+                var bookings =
+                    from booking in this.Connection.Bookings
+                    where (Start > booking.Start && End > booking.End) || (Start > booking.Start && Start < booking.End)
+                    select booking.BookedCar;
+
+                var query =
+                    from cars in this.Connection.Cars
+                    .Where(i => !bookings.Contains(i.PlateNumber))
+                    select cars;
+                foreach (var Automobile in query)
+                {
+                    Cars.Add(new Car(Automobile.PlateNumber, Automobile.Make, Automobile.Model, Automobile.Year, Automobile.Kilometers, Automobile.BurnedLiters));
+                }
+            }catch (Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
             return Cars;
         }
         public bool AddReport (Report report)
         {
-            
+            try
+            {
                 this.Connection.Reports.InsertOnSubmit(new ReportTable(report));
                 this.Connection.SubmitChanges();
-                return true;
-            
-
+            }catch (Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
+            }
+            return true;
         }
         public bool DeleteReport (int ID)
         {
@@ -254,7 +293,7 @@ namespace Delta.DeltaDBManager
             }
             catch (Exception e)
             {
-                return false;
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
         }
         public Report GetReportByID (int ID)
@@ -269,42 +308,55 @@ namespace Delta.DeltaDBManager
                 return new Report(query.ID, this.GetBookingByID(query.ReportedBooking), query.Subject, query.Message);
             } catch (Exception e)
             {
-                return null;
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
         }
 
         public List<Report> GetReportsForCar(string CarPlate)
         {
-            List<Report> Reports = new List<Report>();
-            var query =
-                from report in this.Connection.Reports
-                where ((this.GetBookingByID(report.ReportedBooking).BookedCar.PlateNumber) == CarPlate)
-                select report;
-            foreach (var SingleReport in query)
+            try
             {
-                Reports.Add(new Report(SingleReport.ID, this.GetBookingByID(SingleReport.ReportedBooking
-                    ), SingleReport.Subject, SingleReport.Message));
+                List<Report> Reports = new List<Report>();
+                var query =
+                    from report in this.Connection.Reports
+                    where ((this.GetBookingByID(report.ReportedBooking).BookedCar.PlateNumber) == CarPlate)
+                    select report;
+                foreach (var SingleReport in query)
+                {
+                    Reports.Add(new Report(SingleReport.ID, this.GetBookingByID(SingleReport.ReportedBooking
+                        ), SingleReport.Subject, SingleReport.Message));
+                }
+                return Reports;
+            } catch (Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
-            return Reports;
-            
 
         }
         public bool UpdateReport (Report UpdatableReport)
         {
-            var updatingReport =
-                (from reportQuery in this.Connection.Reports
-                 where reportQuery.ID == UpdatableReport.ID
-                 select reportQuery)
-                 .First();
-            updatingReport.Subject = UpdatableReport.Subject;
-            updatingReport.Message = UpdatableReport.Message;
-            updatingReport.ReportedBooking = UpdatableReport.ReportedBooking.ID;
-            this.Connection.SubmitChanges();
+            try
+            {
+                var updatingReport =
+                    (from reportQuery in this.Connection.Reports
+                     where reportQuery.ID == UpdatableReport.ID
+                     select reportQuery)
+                     .First();
+                updatingReport.Subject = UpdatableReport.Subject;
+                updatingReport.Message = UpdatableReport.Message;
+                updatingReport.ReportedBooking = UpdatableReport.ReportedBooking.ID;
+                this.Connection.SubmitChanges();
+            } catch (Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
+            }
             return true;
         }
         public List<Report> GetReportsForBooking(int BookingID)
         {
             List<Report> Reports = new List<Report>();
+            try
+            {
                 var query =
                     from report in this.Connection.Reports
                     where (report.ReportedBooking == BookingID)
@@ -314,7 +366,11 @@ namespace Delta.DeltaDBManager
                     Reports.Add(new Report(SingleReport.ID, this.GetBookingByID(SingleReport.ReportedBooking
                         ), SingleReport.Subject, SingleReport.Message));
                 }
-                return Reports;
+            }catch (Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
+            }
+            return Reports;
            
 
         }
@@ -330,57 +386,80 @@ namespace Delta.DeltaDBManager
                 return new User(query.Name, query.Email, query.PasswordHash,Convert.ToBoolean(query.isAdmin),Convert.ToInt16(query.LicensePoints), query.LicenseExpiration, query.License);
             } catch (Exception e)
             {
-                return null;
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
         }
 
         public bool AddUser (User user)
         {
+            try
+            {
                 this.Connection.Users.InsertOnSubmit(new UserTable(user));
                 this.Connection.SubmitChanges();
-                return true;
+            }catch(Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
+            }
+            return true;
         }
 
         public bool DeleteUser (User DeletingUser)
         {
-            var query =
-                (from user in this.Connection.Users
-                 where user.Email == DeletingUser.Email
-                 select user)
-                .First();
-            this.Connection.Users.DeleteOnSubmit(query);
-            this.Connection.SubmitChanges();
-                return true;
+            try
+            {
+                var query =
+                    (from user in this.Connection.Users
+                     where user.Email == DeletingUser.Email
+                     select user)
+                    .First();
+                this.Connection.Users.DeleteOnSubmit(query);
+                this.Connection.SubmitChanges();
+            } catch(Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
+            }
+            return true;
         }
         public bool UpdateUser (User updatableUser)
         {
+            try
+            {
                 var updatingUser =
                     (from userQuery in this.Connection.Users
                      where userQuery.Email == updatableUser.Email
                      select userQuery)
                      .First();
-                updatingUser.Name= updatableUser.Name;
+                updatingUser.Name = updatableUser.Name;
                 updatingUser.License = updatableUser.License;
                 updatingUser.LicenseExpiration = updatableUser.LicenseExpiration;
                 updatingUser.LicensePoints = updatableUser.LicensePoints;
                 updatingUser.PasswordHash = updatableUser.PasswordHash;
                 updatingUser.isAdmin = Convert.ToInt32(updatableUser.isAdmin);
                 this.Connection.SubmitChanges();
-                return true;
+            } catch (Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
+            }
+            return true;
             
 
         }
         public List<User> GetUsers()
         {
-
             List<User> Users = new List<User>();
-            var query =
-                from userz in this.Connection.Users
-                select userz;
-            
-            foreach (var utonto in query)
+            try
             {
-                Users.Add(new User(utonto.Name, utonto.Email, utonto.PasswordHash,Convert.ToBoolean(utonto.isAdmin),Convert.ToInt16(utonto.LicensePoints), utonto.LicenseExpiration, utonto.License));
+                var query =
+                    from userz in this.Connection.Users
+                    select userz;
+
+                foreach (var utonto in query)
+                {
+                    Users.Add(new User(utonto.Name, utonto.Email, utonto.PasswordHash, Convert.ToBoolean(utonto.isAdmin), Convert.ToInt16(utonto.LicensePoints), utonto.LicenseExpiration, utonto.License));
+                }
+            } catch (Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
             return Users;
 
@@ -388,12 +467,15 @@ namespace Delta.DeltaDBManager
         }
         public bool AddService(Service service)
         {
-
+            try
+            {
                 this.Connection.Services.InsertOnSubmit(new ServiceTable(service));
                 this.Connection.SubmitChanges();
                 return true;
-            
-
+            }catch (Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
+            }
         }
         public bool DeleteService(int ID)
         {
@@ -410,27 +492,35 @@ namespace Delta.DeltaDBManager
             }
             catch (Exception e)
             {
-                return false;
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
 
         }
         public bool UpdateService(Service UpdatableService)
         {
-            var updatingService =
-                (from serv in this.Connection.Services
-                 where serv.ID== UpdatableService.ID
-                 select serv)
-                 .First();
-            updatingService.Kilometers = UpdatableService.Kilometers;
-            updatingService.ServicedCar = UpdatableService.ServicedCar.PlateNumber;
-            updatingService.TotalSpent = UpdatableService.TotalSpent;
-            this.Connection.SubmitChanges();
+            try
+            {
+                var updatingService =
+                    (from serv in this.Connection.Services
+                     where serv.ID == UpdatableService.ID
+                     select serv)
+                     .First();
+                updatingService.Kilometers = UpdatableService.Kilometers;
+                updatingService.ServicedCar = UpdatableService.ServicedCar.PlateNumber;
+                updatingService.TotalSpent = UpdatableService.TotalSpent;
+                this.Connection.SubmitChanges();
+            } catch (Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
+            }
             return true;
         
     }
         public List<Service> GetServicesForCar (string PlateNumber)
         {
                 List < Service > RetrievedServices= new List<Service>();
+            try
+            {
                 var query =
                     from serv in this.Connection.Services
                     where serv.ServicedCar == PlateNumber
@@ -439,16 +529,27 @@ namespace Delta.DeltaDBManager
                 {
                     RetrievedServices.Add(new Service(service.ID, this.GetCarByPlate(service.ServicedCar), service.Kilometers, (float)service.TotalSpent));
                 }
-                return RetrievedServices;
+            } catch (Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
+            }
+            return RetrievedServices;
             
         }
         public Service GetServiceByID (int ID)
         {
-            var service =
-               (from serv in this.Connection.Services
-                where serv.ID == ID
-                select serv)
-                .First();
+            var service = new Delta.DeltaDBManager.ServiceNS.ServiceTable();
+            try
+            {
+                service =
+                   (from serv in this.Connection.Services
+                    where serv.ID == ID
+                    select serv)
+                    .First();
+            } catch (Exception e)
+            {
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
+            }
             return new Service(service.ID, this.GetCarByPlate(service.ServicedCar), service.Kilometers, (float)service.TotalSpent);
         }
         public int GetMaxBooking()
@@ -463,7 +564,7 @@ namespace Delta.DeltaDBManager
             }
             catch (Exception e)
             {
-                return 0;
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
         }
         public int GetMaxService()
@@ -478,7 +579,7 @@ namespace Delta.DeltaDBManager
             }
             catch (Exception e)
             {
-                return 0;
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
         }
         public int GetMaxReport()
@@ -493,7 +594,7 @@ namespace Delta.DeltaDBManager
             }
             catch (Exception e)
             {
-                return 0;
+                throw new FaultException<DatabaseFault>(new DatabaseFault(e.ToString()));
             }
         }
     }
